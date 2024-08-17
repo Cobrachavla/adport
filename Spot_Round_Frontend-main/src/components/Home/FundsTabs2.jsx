@@ -1,6 +1,6 @@
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import FundCards from "./FundCards";
+import FundCards from "./UniversityCard";
 import SectionTitle from "./SectionTitle";
 
 export default function FundsTabs() {
