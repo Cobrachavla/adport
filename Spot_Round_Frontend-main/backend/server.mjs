@@ -43,15 +43,15 @@ app.get('/api/filters', async (req, res) => {
 });
 
 app.post('/api/predict', async (req, res) => {
-  const { percentile, city, branches} = req.body;
+  const { percentile, city, Branch_Name, Category, Course_Name } = req.body;
 
   const query = {};
 
-  if (city) {
+  if (city && city.trim() !== '' && city !== '-- select an option --') {
     query['District'] = city.trim(); 
   }
 
-  if (percentile) {
+  if (percentile && percentile.trim() !== '') {
     const percentileNumber = parseFloat(percentile);
     if (!isNaN(percentileNumber)) {
       query['percentile'] = { $lte: percentileNumber };
@@ -60,10 +60,17 @@ app.post('/api/predict', async (req, res) => {
     }
   }
 
-  if (branches) {
-    query['Branch Name'] = branches.trim(); 
+  if (Branch_Name && Branch_Name.trim() !== '' && Branch_Name !== '-- select an option --') {
+    query['Branch Name'] = Branch_Name.trim();
   }
 
+  if (Category && Category.trim() !== '' && Category !== '-- select an option --') {
+    query['Category'] = Category.trim();
+  }
+
+  if (Course_Name && Course_Name.trim() !== '' && Course_Name !== '-- select an option --') {
+    query['Course Name'] = Course_Name.trim();
+  }
   try {
     const colleges = await collection.find(query).sort({ percentile: -1 }).limit(10).toArray();
     res.json(colleges);
@@ -72,6 +79,7 @@ app.post('/api/predict', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching colleges' });
   }
 });
+
 
 
 
