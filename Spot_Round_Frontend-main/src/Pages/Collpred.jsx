@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import Discover from "../components/Home/Discover";
 import Front from "../components/Home/Front1";
 import Funds from "../components/Home/Funds2";
@@ -9,11 +10,13 @@ import Stories from "../components/Home/Stories";
 import Trusted from "../components/Home/Trusted";
 
 export default function Collpred() {
+  const [showFunds, setShowFunds] = useState(false);
+
   return (
     <main>
       <Front />
-      <Stats />
-      <Funds />
+      <Stats onSearch={() => setShowFunds(true)} />
+      {showFunds && <Funds />}
       <News />
       <HowItWorks />
     </main>

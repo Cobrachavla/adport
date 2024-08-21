@@ -6,40 +6,16 @@ import SectionTitle from "./SectionTitle";
 export default function FundsTabs() {
   return (
     <Tabs className="sm:mt-0 mt-14">
-      <div className="flex items-center sm:justify-between justify-center flex-wrap my-8">
-        <SectionTitle title="Most Popular Colleges" classes="text-center"/>
-        {/* <TabList className="flex overflow-auto">
-          <Tab className="px-4 py-3 cursor-pointer font-bold sm:text-[16px] text-[14px]">
-            All
-          </Tab>
-          <Tab className="px-4 py-3 cursor-pointer font-bold sm:text-[16px] text-[14px]">
-            Engineering
-          </Tab>
-          <Tab className="px-4 py-3 cursor-pointer font-bold sm:text-[16px] text-[14px]">
-            Medical
-          </Tab>
-          <Tab className="px-4 py-3 cursor-pointer font-bold sm:text-[16px] text-[14px]">
-            MBA
-          </Tab>
-          <Tab className="px-4 py-3 cursor-pointer font-bold sm:text-[16px] text-[14px]">
-            BCA
-          </Tab>
-        </TabList> */}
+      <div className="my-8 flex flex-col items-center">
+        <SectionTitle 
+          title="Most Popular Colleges" 
+          classes="text-center text-2xl font-bold sm:text-3xl" 
+        />
       </div>
       <TabPanel>
-        <FundCards />
-      </TabPanel>
-      <TabPanel>
-        <p>something else not available yet</p>
-      </TabPanel>
-      <TabPanel>
-        <FundCards />
-      </TabPanel>
-      <TabPanel>
-        <p>something else not available yet</p>
-      </TabPanel>
-      <TabPanel>
-        <FundCards />
+        <div className="flex justify-center">
+          <FundCards />
+        </div>
       </TabPanel>
     </Tabs>
   );
