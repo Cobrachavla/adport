@@ -48,7 +48,7 @@ function Navbar() {
             </div>
           </div>
 
-          <Link to="/">
+          <Link to="/login">
             <div className="hidden md:block hover:bg-button-primary px-4 py-1 rounded-xl">
               Log In
             </div>
@@ -102,7 +102,7 @@ function Navbar() {
                 Contact
               </Link>
               <Link
-                to="/profile/neo"
+                to="/login"
                 className="hover:bg-primary-base bg-button-primary text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Log In

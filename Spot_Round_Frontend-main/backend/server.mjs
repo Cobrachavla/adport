@@ -11,6 +11,7 @@ const port = process.env.PORT || 4000;
 const uri = 'mongodb://localhost:27017';
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let collection;
+let recommendedCollegesCollection;
 
 // Connect to MongoDB
 async function connectToDB() {
@@ -19,6 +20,7 @@ async function connectToDB() {
     console.log("Connected to MongoDB");
     const db = client.db('college_predictor');
     collection = db.collection('Colleges');
+    recommendedCollegesCollection = db.collection('Recommended');
 
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -42,6 +44,7 @@ app.get('/api/filters', async (req, res) => {
       res.status(500).json({ error: 'An error occurred while fetching filters' });
   }
 });
+
 
 app.post('/api/predict', async (req, res) => {
   const { percentile, city, Branch_Name, Category, Course_Name } = req.body;
@@ -80,6 +83,35 @@ app.post('/api/predict', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching colleges' });
   }
 });
+
+app.get('/api/recommended', async (req, res) => {
+  try {
+    // Switch to the correct collection
+    const db = client.db('college_predictor');
+    const recommendedCollection = db.collection('Recommended'); // Ensure this is correct
+
+    // Fetch documents from the collection with specific fields
+    const recommendedColleges = await recommendedCollection.find(
+      {}, // No filter, retrieve all documents
+      {
+        projection: { 
+          _id: 1, 
+          colleege_name: 1, 
+          ciity: 1, 
+          percentiile: 1 
+        }
+      }
+    ).toArray();
+
+    // Send the fetched documents as JSON response
+    res.json(recommendedColleges);
+  } catch (error) {
+    console.error('Error occurred while fetching recommended colleges', error);
+    res.status(500).json({ error: 'An error occurred while fetching recommended colleges' });
+  }
+});
+
+
 
 
 // Add a user record
