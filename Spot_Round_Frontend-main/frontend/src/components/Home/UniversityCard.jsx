@@ -17,7 +17,7 @@ const UniversityCard = ({ name, city, branch, percentile, onApply }) => (
       <CardSubtitle>City: {city}</CardSubtitle>
       <CardSubtitle>Branch: {branch}</CardSubtitle>
       <CardSubtitle>Percentile: {percentile}</CardSubtitle>
-      <CardButton onClick={onApply}>APPLY NOW</CardButton>
+      <CardButton onClick={() => onApply(link)}>APPLY NOW</CardButton>
     </CardText>
   </Card>
 );
@@ -32,7 +32,8 @@ const UniversityCardList = ({ universities }) => (
         percentile={college['percentile']}
         branch={college['Branch Name']}
         city={college['District']}
-        onApply={() => console.log(`Applying to ${college['College Name']}`)}
+        link={college['Website URL']}
+        onApply={(link) => console.log(`Applying to ${link}`)}
       />
     ))
   ) : (
@@ -40,5 +41,6 @@ const UniversityCardList = ({ universities }) => (
     )}
   </CardContainer>
 );
+
 
 export default UniversityCardList;

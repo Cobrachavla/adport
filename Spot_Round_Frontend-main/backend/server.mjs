@@ -35,7 +35,8 @@ app.get('/api/filters', async (req, res) => {
       const categories = await collection.distinct('Category');
       const courses = await collection.distinct('Course Name');
       const city = await collection.distinct('District');
-      res.json({ college_name,branches, categories, courses, city });
+      const links = await collection.distinct('Website URL');
+      res.json({ college_name,branches, categories, courses, city, links});
   } catch (error) {
       console.error('Error occurred while fetching filters', error);
       res.status(500).json({ error: 'An error occurred while fetching filters' });
@@ -79,10 +80,6 @@ app.post('/api/predict', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching colleges' });
   }
 });
-
-
-
-
 
 
 // Add a user record
