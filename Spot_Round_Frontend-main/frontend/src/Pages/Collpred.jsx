@@ -11,7 +11,7 @@ import Trusted from "../components/Home/Trusted";
 
 export default function Collpred() {
   const [showFunds, setShowFunds] = useState(false);
-
+  
   return (
     <main>
       <Front />
