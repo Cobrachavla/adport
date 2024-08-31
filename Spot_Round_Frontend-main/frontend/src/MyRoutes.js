@@ -3,6 +3,7 @@ import Home from "./Pages/Home";
 import Admportal from "./Pages/admportal";
 import Collpred from "./Pages/Collpred";
 import LoginForm from "./LoginPage";
+import Neetpred from "./Pages/Neetpred";
 export default function MyRoutes() {
   return (
     <Routes>
@@ -10,6 +11,7 @@ export default function MyRoutes() {
       <Route path="/admportal" element={<Admportal />} />
       <Route path="/collpred" element={<Collpred />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/neetpred" element={<Neetpred />} />
     </Routes>
   );
 }

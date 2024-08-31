@@ -184,7 +184,7 @@
 }
 
 .auth-page .overlay {
-  /*background-image: url();*/
+  background-image: url('./assets/home/logo.jpg');
   background-position: center;
   background-size: cover;
   color: #030000;

@@ -5,44 +5,39 @@ import Container from "./Container";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <nav className="py-2 z-40">
       <Container>
         <div className="flex items-center justify-between h-16">
           <div className="flex gap-4 items-center">
-            <img className="h-[40px] w-[120px]" src={logo} alt="Workflow" />
+            <img className="h-[130px] w-[120px]" src={logo} alt="Workflow" />
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link
                   to="/"
-                  className=" hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Home
+                  Spotround
                 </Link>
 
                 <Link
                   to="/"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Funding
+                  Admissions
                 </Link>
                 <Link
-                  to="/"
+                  to="/about"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  About
+                  About Us
                 </Link>
                 <Link
-                  to="/"
+                  to="/contact"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Membership
-                </Link>
-                <Link
-                  to="/"
-                  className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Contact
+                  Contact Us
                 </Link>
               </div>
             </div>
@@ -53,6 +48,7 @@ function Navbar() {
               Log In
             </div>
           </Link>
+
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -78,25 +74,25 @@ function Navbar() {
                 Home
               </Link>
               <Link
-                to="/"
+                to="/funding"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Funding
               </Link>
               <Link
-                to="/"
+                to="/about"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 About
               </Link>
               <Link
-                to="/"
+                to="/membership"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Membership
               </Link>
               <Link
-                to="/"
+                to="/contact"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Contact
@@ -114,4 +110,5 @@ function Navbar() {
     </nav>
   );
 }
+
 export default Navbar;

@@ -12,8 +12,8 @@ const uri = 'mongodb://localhost:27017';
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let collection;
 let recommendedCollegesCollection;
+let neetCollection;
 
-// Connect to MongoDB
 async function connectToDB() {
   try {
     await client.connect();
@@ -21,10 +21,11 @@ async function connectToDB() {
     const db = client.db('college_predictor');
     collection = db.collection('Colleges');
     recommendedCollegesCollection = db.collection('Recommended');
+    neetCollection = db.collection('NeetPredictor');
 
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
-    process.exit(1); // Exit the process if we cannot connect
+    process.exit(1);
   }
 }
 
@@ -45,6 +46,18 @@ app.get('/api/filters', async (req, res) => {
   }
 });
 
+app.get('/api/Neetfilters', async (req, res) => {
+  try {
+    const institutes = await neetCollection.distinct('Allotted Institute');
+    const categories = await neetCollection.distinct('Alloted Category');
+    const courses = await neetCollection.distinct('Course');
+    const quotas = await neetCollection.distinct('max_quota');
+    res.json({ institutes, categories, courses, quotas });
+  } catch (error) {
+    console.error('Error occurred while fetching filters from neetcoll', error);
+    res.status(500).json({ error: 'An error occurred while fetching filters' });
+  }
+});
 
 app.post('/api/predict', async (req, res) => {
   const { percentile, city, Branch_Name, Category, Course_Name } = req.body;
@@ -84,15 +97,45 @@ app.post('/api/predict', async (req, res) => {
   }
 });
 
+app.post('/api/Neetpredict', async (req, res) => {
+  const { maxRank, institute, category, course, quota } = req.body;  // Include quota
+  const query = {};
+
+  if (institute && institute.trim() !== '') {
+    query['Allotted Institute'] = institute.trim();
+  }
+  if (maxRank && maxRank.trim() !== '') {
+    const rankNumber = parseFloat(maxRank);
+    if (!isNaN(rankNumber)) {
+      query['max_rank'] = { $gte: rankNumber };
+    } else {
+      return res.status(400).json({ error: 'Invalid rank value' });
+    }
+  }if (course && course.trim() !== '') {
+    query['Course'] = course.trim();
+  }
+  if (category && category.trim() !== '') {
+    query['Alloted Category'] = category.trim();
+  }
+  if (quota && quota.trim() !== '') {
+    query['max_quota'] = quota.trim();  
+  }
+
+  try {
+    const colleges = await neetCollection.find(query).sort({ min_rank: 1 }).limit(10).toArray();
+    res.json(colleges);
+  } catch (error) {
+    console.error('Error occurred while fetching colleges from neetcoll', error);
+    res.status(500).json({ error: 'An error occurred while fetching colleges' });
+  }
+});
+
 app.get('/api/recommended', async (req, res) => {
   try {
-    // Switch to the correct collection
     const db = client.db('college_predictor');
-    const recommendedCollection = db.collection('Recommended'); // Ensure this is correct
-
-    // Fetch documents from the collection with specific fields
+    const recommendedCollection = db.collection('Recommended'); 
     const recommendedColleges = await recommendedCollection.find(
-      {}, // No filter, retrieve all documents
+      {}, 
       {
         projection: { 
           _id: 1, 
@@ -103,7 +146,6 @@ app.get('/api/recommended', async (req, res) => {
       }
     ).toArray();
 
-    // Send the fetched documents as JSON response
     res.json(recommendedColleges);
   } catch (error) {
     console.error('Error occurred while fetching recommended colleges', error);
@@ -112,9 +154,6 @@ app.get('/api/recommended', async (req, res) => {
 });
 
 
-
-
-// Add a user record
 async function addUserRecord(req, res) {
   try {
     const db = client.db("mydb");
@@ -136,7 +175,6 @@ async function addUserRecord(req, res) {
   }
 }
 
-// Handle login by POST request
 async function loginByPost(req, res) {
   try {
     const db = client.db("mydb");
@@ -162,7 +200,6 @@ async function loginByPost(req, res) {
   }
 }
 
-// Add a contact us record
 app.post('/addtodo', async (req, res) => {
   try {
     const db = client.db("mydb");
@@ -184,11 +221,9 @@ app.post('/addtodo', async (req, res) => {
   }
 });
 
-// Routes
 app.post("/addUser", addUserRecord);
 app.post("/login-by-post", loginByPost);
 
-// Start the server
 app.listen(4000, () => {
   console.log("Server started on port 4000");
 });

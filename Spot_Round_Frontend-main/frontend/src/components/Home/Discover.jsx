@@ -25,6 +25,11 @@ const cards = [
     image: news_5,
     title: "Admission portal ",
   },
+  {
+    id: 5,
+    image: discover_3,
+    title: "Neet Predictor",
+  },
 ];
 
 // const DiscoverCard = ({ card }) => {
@@ -45,9 +50,11 @@ const DiscoverCard = ({ card }) => {
       navigate('/admportal');
     } else if (card.title === "College Predictor") {
       navigate('/collpred');
+    } else if (card.title === "Neet Predictor") {
+      navigate('/Neetpred');
     } else {
       navigate(`/discover/${card.id}`);
-    }
+    } 
   };
 
   return (
@@ -71,10 +78,6 @@ const DiscoverCard = ({ card }) => {
     </div>
   );
 };
-
-
-
-
 
 export default function Discover() {
   return (
