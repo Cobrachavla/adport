@@ -25,32 +25,60 @@ export default function Stats() {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    async function fetchFilters() {
-      try {
-        const response = await axios.get('http://localhost:4000/api/filters');
-        setCollegeName([{ value: null, label: 'Select an option' }, ...response.data.college_name.map(name => ({ value: name, label: name }))]);
-        setBranches([{ value: null, label: 'Select an option' }, ...response.data.branches.map(branch => ({ value: branch, label: branch }))]);
-        setCategories([{ value: null, label: 'Select an option' }, ...response.data.categories.map(category => ({ value: category, label: category }))]);
-        setCourses([{ value: null, label: 'Select an option' }, ...response.data.courses.map(course => ({ value: course, label: course }))]);
-        setCity([{ value: null, label: 'Select an option' }, ...response.data.city.map(city => ({ value: city, label: city }))]);
-        setGenders([{ value: null, label: 'Select an option' }, ...response.data.genders.map(gender => ({ value: gender, label: gender }))]);
-      } catch (error) {
-        console.error('Error fetching filters:', error);
-      }
-    }
-
     fetchFilters();
   }, []);
 
-  const isAnyFilterSelected = () => {
-    return (
-      selectedCity || 
-      selectedCourse || 
-      selectedBranch || 
-      selectedCategory || 
-      selectedGender || 
-      percentile.trim() !== ''
-    );
+  const fetchFilters = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/api/filters');
+      setCity([{ value: null, label: 'Select an option' }, ...response.data.city.map(city => ({ value: city, label: city }))]);
+      setCourses([{ value: null, label: 'Select an option' }, ...response.data.courses.map(course => ({ value: course, label: course }))]);
+      setBranches([{ value: null, label: 'Select an option' }, ...response.data.branches.map(branch => ({ value: branch, label: branch }))]);
+      setCategories([{ value: null, label: 'Select an option' }, ...response.data.categories.map(category => ({ value: category, label: category }))]);
+    } catch (error) {
+      console.error('Error fetching filters:', error);
+    }
+  };
+
+  const fetchFilteredOptions = async () => {
+    try {
+      const queryParams = {};
+      if (selectedCity) queryParams.city = selectedCity.value;
+      if (selectedCourse) queryParams.course = selectedCourse.value;
+      if (selectedBranch) queryParams.branch = selectedBranch.value;
+
+      const response = await axios.get('http://localhost:4000/api/filters', {
+        params: queryParams,
+      });
+
+      // Update dependent filters
+      setCourses([{ value: null, label: 'Select an option' }, ...response.data.courses.map(course => ({ value: course, label: course }))]);
+      setBranches([{ value: null, label: 'Select an option' }, ...response.data.branches.map(branch => ({ value: branch, label: branch }))]);
+      setCategories([{ value: null, label: 'Select an option' }, ...response.data.categories.map(category => ({ value: category, label: category }))]);
+    } catch (error) {
+      console.error('Error fetching filtered options:', error);
+    }
+  };
+
+  const handleCityChange = (selectedOption) => {
+    setSelectedCity(selectedOption);
+    setSelectedCourse(null);
+    setSelectedBranch(null);
+    setSelectedCategory(null);
+    fetchFilteredOptions();
+  };
+
+  const handleCourseChange = (selectedOption) => {
+    setSelectedCourse(selectedOption);
+    setSelectedBranch(null);
+    setSelectedCategory(null);
+    fetchFilteredOptions();
+  };
+
+  const handleBranchChange = (selectedOption) => {
+    setSelectedBranch(selectedOption);
+    setSelectedCategory(null);
+    fetchFilteredOptions();
   };
 
   const handleSearch = async () => {
@@ -88,6 +116,16 @@ export default function Stats() {
     setErrorMessage('');
   };
 
+  const isAnyFilterSelected = () => {
+    return (
+      selectedCity || 
+      selectedCourse || 
+      selectedBranch || 
+      selectedCategory || 
+      selectedGender || 
+      percentile.trim() !== ''
+    );
+  };
 
   return (
     <>
@@ -98,7 +136,7 @@ export default function Stats() {
           placeholder="Select City"
           classNamePrefix="react-select"
           value={selectedCity}
-          onChange={setSelectedCity}
+          onChange={handleCityChange}
         />
       </div>
 
@@ -108,7 +146,8 @@ export default function Stats() {
           placeholder="Select Course"
           classNamePrefix="react-select"
           value={selectedCourse}
-          onChange={setSelectedCourse}
+          onChange={handleCourseChange}
+          isDisabled={!selectedCity}
         />
       </div>
 
@@ -118,7 +157,8 @@ export default function Stats() {
           placeholder="Select Branch"
           classNamePrefix="react-select"
           value={selectedBranch}
-          onChange={setSelectedBranch}
+          onChange={handleBranchChange}
+          isDisabled={!selectedCourse}
         />
       </div>
 
@@ -128,17 +168,8 @@ export default function Stats() {
           placeholder="Select Category"
           classNamePrefix="react-select"
           value={selectedCategory}
-          onChange={setSelectedCategory}
-        />
-      </div>
-
-      <div className="w-full">
-        <Select
-          options={genders}
-          placeholder="Select Gender"
-          classNamePrefix="react-select"
-          value={selectedGender}
-          onChange={setSelectedGender}
+          onChange={(option) => setSelectedCategory(option)}
+          isDisabled={!selectedBranch}
         />
       </div>
 
@@ -175,3 +206,4 @@ export default function Stats() {
     </>
   );
 }
+

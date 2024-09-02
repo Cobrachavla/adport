@@ -33,18 +33,35 @@ connectToDB();
 
 app.get('/api/filters', async (req, res) => {
   try {
-      const college_name = await collection.distinct('College Name');
-      const branches = await collection.distinct('Branch Name');
-      const categories = await collection.distinct('Category');
-      const courses = await collection.distinct('Course Name');
-      const city = await collection.distinct('District');
-      const links = await collection.distinct('Website URL');
-      res.json({ college_name,branches, categories, courses, city, links});
+    const { city, course, branch } = req.query;
+    let query = {};
+
+    if (city) {
+      query['District'] = city;  
+    }
+
+    if (course) {
+      query['Course Name'] = course;  
+    }
+
+    if (branch) {
+      query['Branch Name'] = branch;  
+    }
+
+    const college_name = await collection.distinct('College Name', query);
+    const branches = await collection.distinct('Branch Name', query);
+    const categories = await collection.distinct('Category', query);
+    const courses = await collection.distinct('Course Name', query);
+    const cityData = await collection.distinct('District', query);
+    const links = await collection.distinct('Website URL', query);
+
+    res.json({ college_name, branches, categories, courses, city: cityData, links });
   } catch (error) {
-      console.error('Error occurred while fetching filters', error);
-      res.status(500).json({ error: 'An error occurred while fetching filters' });
+    console.error('Error occurred while fetching filters', error);
+    res.status(500).json({ error: 'An error occurred while fetching filters' });
   }
 });
+
 
 app.get('/api/Neetfilters', async (req, res) => {
   try {
