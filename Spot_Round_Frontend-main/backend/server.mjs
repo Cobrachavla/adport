@@ -156,14 +156,21 @@ app.get('/api/recommended', async (req, res) => {
       {
         projection: { 
           _id: 1, 
-          colleege_name: 1, 
-          ciity: 1, 
-          percentiile: 1 
+          Name: 1,
+          'Unique ID': 1,
+          City: 1, 
+          Branch: 1 
         }
       }
     ).toArray();
 
-    res.json(recommendedColleges);
+    // Add a default value for missing Branch fields
+    const collegesWithBranch = recommendedColleges.map(college => ({
+      ...college,
+      Branch: college.Branch || 'Unknown Branch'
+    }));
+
+    res.json(collegesWithBranch);
   } catch (error) {
     console.error('Error occurred while fetching recommended colleges', error);
     res.status(500).json({ error: 'An error occurred while fetching recommended colleges' });
