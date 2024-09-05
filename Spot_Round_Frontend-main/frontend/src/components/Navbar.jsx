@@ -5,6 +5,7 @@ import Container from "./Container";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <nav className="py-2 z-40">
@@ -15,6 +16,12 @@ function Navbar() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link
+                  to="/Home"
+                  className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Home
+                </Link>
+                <Link
                   to="/"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
@@ -22,17 +29,40 @@ function Navbar() {
                 </Link>
 
                 <Link
-                  to="/"
+                  to="/admissions"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Admissions
                 </Link>
-                <Link
-                  to="/"
-                  className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  College Predictor
-                </Link>
+
+                {/* Dropdown for College Predictor */}
+                <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!isDropdownOpen)}
+                    className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    College Predictor
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                      <Link
+                        to="/Collpred"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        CET Predictor 
+                      </Link>
+                      <Link
+                        to="/Neetpred"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        NEET Predictor
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
                 <Link
                   to="/about"
                   className="hover:bg-button-primary hover:text-white px-3 py-2 rounded-md text-sm font-medium"
@@ -51,7 +81,7 @@ function Navbar() {
 
           <Link to="/login">
             <div className="hidden md:block hover:bg-button-primary px-4 py-1 rounded-xl">
-              Log In
+              Log In / Sign up
             </div>
           </Link>
 

@@ -47,7 +47,7 @@ const LoginForm = () => {
     const handleSignInSubmit = async (e) => {
       e.preventDefault();
       try {
-          const response = await fetch('http://localhost:4000/loginByPost', {
+          const response = await fetch('http://localhost:4000/login-by-post', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(signInData),
@@ -58,7 +58,7 @@ const LoginForm = () => {
               console.log(result);
               if (response.status === 200) {
                   alert('Login Successful');
-                  navigate('/'); // Redirect to Home.jsx
+                  navigate('/'); 
               } else {
                   alert('Login Failed');
               }

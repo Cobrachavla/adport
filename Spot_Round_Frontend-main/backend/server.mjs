@@ -180,8 +180,8 @@ app.get('/api/recommended', async (req, res) => {
 
 async function addUserRecord(req, res) {
   try {
-    const db = client.db("mydb");
-    const userCollection = db.collection("user");
+    const db = client.db("college_predictor");
+    const userCollection = db.collection("User");
 
     const { username, password, email, mobile } = req.body;
 
@@ -201,8 +201,8 @@ async function addUserRecord(req, res) {
 
 async function loginByPost(req, res) {
   try {
-    const db = client.db("mydb");
-    const userCollection = db.collection("user");
+    const db = client.db("college_predictor");
+    const userCollection = db.collection("User");
 
     const { email, password } = req.body;
 

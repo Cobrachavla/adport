@@ -32,16 +32,6 @@ const cards = [
   },
 ];
 
-// const DiscoverCard = ({ card }) => {
-//   return (
-//     <div className="relative rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform">
-//       <img src={card.image} alt="discover_image" />
-//       <div className="absolute bottom-10 capitalize left-10 text-white font-bold md:text-[50px] text-[40px]">
-//         {card.title}
-//       </div>
-//     </div>
-//   );
-// };
 const DiscoverCard = ({ card }) => {
   const navigate = useNavigate();
   
@@ -50,6 +40,8 @@ const DiscoverCard = ({ card }) => {
       navigate('/admportal');
     } else if (card.title === "College Predictor") {
       navigate('/collpred');
+    } else if (card.title === "Epaper") {
+      window.location.href = 'https://epaper.vidyarthimitra.org'; 
     } else if (card.title === "Neet Predictor") {
       navigate('/Neetpred');
     } else {
