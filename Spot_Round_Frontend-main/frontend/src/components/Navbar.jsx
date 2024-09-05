@@ -110,34 +110,60 @@ function Navbar() {
                 Home
               </Link>
               <Link
-                to="/funding"
+                to="/"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
-                Funding
+                Spotround
               </Link>
+              <Link
+                to="/admissions"
+                className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Admissions
+              </Link>
+              <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!isDropdownOpen)}
+                    className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    College Predictor
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                      <Link
+                        to="/Collpred"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        CET Predictor 
+                      </Link>
+                      <Link
+                        to="/Neetpred"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        NEET Predictor
+                      </Link>
+                    </div>
+                  )}
+                </div>
               <Link
                 to="/about"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
-                About
-              </Link>
-              <Link
-                to="/membership"
-                className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Membership
+                About Us
               </Link>
               <Link
                 to="/contact"
                 className="hover:bg-primary-base hover:bg-button-primary hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
-                Contact
+                Contact Us
               </Link>
               <Link
                 to="/login"
                 className="hover:bg-primary-base bg-button-primary text-white block px-3 py-2 rounded-md text-base font-medium"
               >
-                Log In
+                Log In/ Sign up
               </Link>
             </div>
           </div>

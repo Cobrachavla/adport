@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import bodyParser from 'body-parser';
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 
 const app = express();
 app.use(cors());
@@ -13,6 +15,9 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 let collection;
 let recommendedCollegesCollection;
 let neetCollection;
+let users = {};
+let otps = {};
+
 
 async function connectToDB() {
   try {
@@ -30,6 +35,44 @@ async function connectToDB() {
 }
 
 connectToDB();
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: 'your-email@gmail.com',
+      pass: 'your-password',
+  },
+});
+
+app.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+  const otp = crypto.randomInt(100000, 999999); 
+  otps[email] = otp;
+
+  transporter.sendMail({
+      from: 'your-email@gmail.com',
+      to: email,
+      subject: 'Password Reset OTP',
+      text: `Your OTP is ${otp}`,
+  }, (error, info) => {
+      if (error) {
+          return res.status(500).json({ message: 'Error sending OTP' });
+      }
+      res.json({ message: 'OTP sent' });
+  });
+});
+
+app.post('/verify-otp', (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  if (otps[email] && otps[email] === parseInt(otp, 10)) {
+      users[email] = newPassword;
+      delete otps[email]; 
+      res.json({ message: 'Password reset successful' });
+  } else {
+      res.status(400).json({ message: 'Invalid OTP' });
+  }
+});
 
 app.get('/api/filters', async (req, res) => {
   try {

@@ -265,3 +265,10 @@
 .auth-page #yt-link>i {
   color: #f00;
 }
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
