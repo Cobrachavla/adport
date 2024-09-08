@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 const port = process.env.PORT || 4000;
 
-const uri = 'mongodb://localhost:27017';
+const uri = 'mongodb://0.0.0.0';
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 let collection;
 let recommendedCollegesCollection;
@@ -23,10 +23,10 @@ async function connectToDB() {
   try {
     await client.connect();
     console.log("Connected to MongoDB");
-    const db = client.db('college_predictor');
-    collection = db.collection('Colleges');
+    const db = client.db('mydb');
+    collection = db.collection('collegelist');
     recommendedCollegesCollection = db.collection('Recommended');
-    neetCollection = db.collection('NeetPredictor');
+    neetCollection = db.collection('neetcoll');
 
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -90,7 +90,6 @@ app.get('/api/filters', async (req, res) => {
     if (branch) {
       query['Branch Name'] = branch;  
     }
-
     const college_name = await collection.distinct('College Name', query);
     const branches = await collection.distinct('Branch Name', query);
     const categories = await collection.distinct('Category', query);
