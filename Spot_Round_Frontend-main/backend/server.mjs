@@ -7,6 +7,7 @@ import csv from 'csv-parser';  // For parsing CSV files
 import fs from 'fs';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import { Parser } from 'json2csv';
 
 const app = express();
 app.use(cors());
@@ -86,6 +87,35 @@ app.post('/upload-neet', upload.single('csvFile'), async (req, res) => {
   } catch (error) {
     console.error('Error updating NEET dataset:', error);
     res.status(500).json({ error: 'Failed to update NEET dataset' });
+  }
+});
+
+app.get('/download-mhtcet', async (req, res) => {
+  try {
+    const data = await collection.find({}).toArray();
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(data);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('mhtcet_dataset.csv');
+    res.send(csv);
+  } catch (error) {
+    console.error('Error downloading MHT CET dataset:', error);
+    res.status(500).json({ error: 'Failed to download MHT CET dataset' });
+  }
+});
+
+// Route to download NEET dataset
+app.get('/download-neet', async (req, res) => {
+  try {
+    const data = await neetCollection.find({}).toArray();
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(data);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('neet_dataset.csv');
+    res.send(csv);
+  } catch (error) {
+    console.error('Error downloading NEET dataset:', error);
+    res.status(500).json({ error: 'Failed to download NEET dataset' });
   }
 });
 
