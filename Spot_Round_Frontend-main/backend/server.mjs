@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import bodyParser from 'body-parser';
+import multer from 'multer';   // For file uploads
+import csv from 'csv-parser';  // For parsing CSV files
+import fs from 'fs';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 
@@ -10,31 +13,81 @@ app.use(cors());
 app.use(bodyParser.json());
 const port = process.env.PORT || 4000;
 
+// MongoDB connection setup
 const uri = 'mongodb://0.0.0.0';
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
 let collection;
 let recommendedCollegesCollection;
 let neetCollection;
-let users = {};
-let otps = {};
-
 
 async function connectToDB() {
   try {
     await client.connect();
     console.log("Connected to MongoDB");
     const db = client.db('mydb');
-    collection = db.collection('collegelist');
-    recommendedCollegesCollection = db.collection('Recommended');
-    neetCollection = db.collection('neetcoll');
-
+    collection = db.collection('collegelist');  // MHT-CET collection
+    neetCollection = db.collection('neetcoll'); // NEET collection
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 }
-
 connectToDB();
+
+// Set up multer for file upload handling
+const upload = multer({ dest: 'uploads/' }); // Save uploaded files in 'uploads' folder
+
+// Helper function to parse and insert data into the collection
+async function insertCsvDataToDb(filePath, collection) {
+  const results = [];
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+        try {
+          await collection.deleteMany({});
+          await collection.insertMany(results);
+          fs.unlinkSync(filePath);  
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', (error) => reject(error));
+  });
+}
+
+
+// Route for uploading MHT CET dataset CSV
+app.post('/upload-mhtcet', upload.single('csvFile'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  try {
+    await insertCsvDataToDb(req.file.path, collection); // Insert data into MHT CET collection
+    res.status(200).json({ message: 'MHT CET dataset updated successfully' });
+  } catch (error) {
+    console.error('Error updating MHT CET dataset:', error);
+    res.status(500).json({ error: 'Failed to update MHT CET dataset' });
+  }
+});
+
+// Route for uploading NEET dataset CSV
+app.post('/upload-neet', upload.single('csvFile'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded');
+  }
+  try {
+    await insertCsvDataToDb(req.file.path, neetCollection); // Insert data into NEET collection
+    res.status(200).json({ message: 'NEET dataset updated successfully' });
+  } catch (error) {
+    console.error('Error updating NEET dataset:', error);
+    res.status(500).json({ error: 'Failed to update NEET dataset' });
+  }
+});
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -222,8 +275,8 @@ app.get('/api/recommended', async (req, res) => {
 
 async function addUserRecord(req, res) {
   try {
-    const db = client.db("college_predictor");
-    const userCollection = db.collection("User");
+    const db = client.db("mydb");
+    const userCollection = db.collection("user");
 
     const { username, password, email, mobile } = req.body;
 
@@ -243,8 +296,8 @@ async function addUserRecord(req, res) {
 
 async function loginByPost(req, res) {
   try {
-    const db = client.db("college_predictor");
-    const userCollection = db.collection("User");
+    const db = client.db("mydb");
+    const userCollection = db.collection("user");
 
     const { email, password } = req.body;
 
